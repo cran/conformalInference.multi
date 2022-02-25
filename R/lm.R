@@ -20,7 +20,6 @@
 #' @export lm_multi
 
 
-
 lm_multi = function() {
 
   # Training function
@@ -54,3 +53,6 @@ lm_multi = function() {
 
   return(list(train.fun=train.fun, predict.fun=predict.fun))
 }
+
+
+

@@ -13,7 +13,8 @@ conformal.multidim.full(
   alpha = 0.1,
   mad.train.fun = NULL,
   mad.predict.fun = NULL,
-  score = c("l2", "mahalanobis", "max", "scaled.max"),
+  score = "l2",
+  s.type = "st-dev",
   num.grid.pts.dim = 100,
   grid.factor = 1.25,
   verbose = FALSE
@@ -65,7 +66,10 @@ usual (unscaled) conformal score is used.}
 
 \item{score}{Method to compute nonconformity measure in the multivariate regime.
 The user can choose between squared l^2 norm of the residual,
-mahalanobis depth of the residual, the max norm of the residual, or a scaled max}
+mahalanobis depth of the residual, the max norm of the residual.}
+
+\item{s.type}{The type of modulation function.
+Currently we have 3 options: "identity","st-dev". Default is "st-dev"}
 
 \item{num.grid.pts.dim}{Number of grid points per dimension used when forming the conformal
 intervals (each num.grid.pts.dim^q points is a trial point). Default is
@@ -108,17 +112,23 @@ If the data (training and test) are assumed to be exchangeable, the basic
   (who use this basic fact as motivation for proposing more refined trimming methods).
 }
 \examples{
+n=25
+p=4
+q=2
 
-n = 4
-n0 = 2
-p = 2
-mu = rep(0,p)
+
+mu=rep(0,p)
 x = mvtnorm::rmvnorm(n, mu)
-my_grid <- seq(from=0,to=1,length.out=2)
-y = t(apply(x,1,function(u) u[1] + u[2]*cos(6*pi*my_grid)))
-x0 = mvtnorm::rmvnorm(n0, mu)
+beta<-sapply(1:q, function(k) c(mvtnorm::rmvnorm(1,mu)))
+y = x\%*\%beta + t(mvtnorm::rmvnorm(q,1:n))
+x0=x[ceiling(0.9*n):n,]
+y0=y[ceiling(0.9*n):n,]
+
+n0<-nrow(y0)
+q<-ncol(y)
+
+
 fun=mean_multi()
-#fun=lm_multi()
 
 #################################### FULL CONFORMAL
 
