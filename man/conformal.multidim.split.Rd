@@ -14,11 +14,11 @@ conformal.multidim.split(
   split = NULL,
   seed = FALSE,
   randomized = FALSE,
-  seed_rand = FALSE,
+  seed.rand = FALSE,
   verbose = FALSE,
   rho = 0.5,
   score = "l2",
-  s_type = "st-dev",
+  s.type = "st-dev",
   mad.train.fun = NULL,
   mad.predict.fun = NULL
 )
@@ -54,7 +54,7 @@ is ignored.}
 
 \item{randomized}{Should the randomized approach be used? Default is FALSE.}
 
-\item{seed_rand}{The seed for the randomized version. Default is FALSE.}
+\item{seed.rand}{The seed for the randomized version. Default is FALSE.}
 
 \item{verbose}{Should intermediate progress be printed out? Default is FALSE.}
 
@@ -64,7 +64,7 @@ Default is 0.5.}
 \item{score}{The non-conformity measure. It can either be "max", "l2", "mahalanobis".
 The default is "l2".}
 
-\item{s_type}{The type of modulation function.
+\item{s.type}{The type of modulation function.
 Currently we have 3 options: "identity","st-dev","alpha-max". Default is "st-dev"}
 
 \item{mad.train.fun}{A function to perform training on the absolute residuals
@@ -88,9 +88,9 @@ means that no local scaling is done for the conformal score, i.e., the
 usual (unscaled) conformal score is used.}
 }
 \value{
-A list with the following components: x0,pred,k_s,s_type,s,alpha,randomized,tau,
+A list with the following components: x0,pred,k_s,s.type,s,alpha,randomized,tau,
   average_width,lo,up. In particular pred, lo, up are the matrices of
-  dimension n0 x q, k_s is a scalar, s_type is a string, s is a vector of length q,
+  dimension n0 x q, k_s is a scalar, s.type is a string, s is a vector of length q,
   alpha is a scalar between 0 and 1, randomized is a logical value,
   tau is a scalar between 0 and 1,and average_width is a positive scalar.
 }
@@ -99,14 +99,14 @@ Compute prediction intervals using split conformal inference with multivariate
 response.
 }
 \details{
-If the two mad functions are provided they take precedence over the s_type parameter,
+If the two mad functions are provided they take precedence over the
+s.type parameter,
 and they force a local scoring via the mad function predicted values.
 }
 \examples{
 n=50
 p=4
 q=2
-
 
 mu=rep(0,p)
 x = mvtnorm::rmvnorm(n, mu)
@@ -119,22 +119,18 @@ n0<-nrow(y0)
 q<-ncol(y)
 
 fun=mean_multi()
-fun=lm_multi()
-fun=elastic.funs()
-
-
-############################## SPLIT CONFORMAL
-
 
 final.point = conformal.multidim.split(x,y,x0, fun$train.fun, fun$predict.fun,
                              alpha=0.1,
-                                split=NULL, seed=FALSE, randomized=FALSE,seed_rand=FALSE,
-                                verbose=FALSE, rho=0.5,score ="l2",s_type="st-dev")
+                                split=NULL, seed=FALSE, randomized=FALSE,seed.rand=FALSE,
+                                verbose=FALSE, rho=0.5,score ="l2",s.type="st-dev")
 
-ppp2<-plot_multidim_split(final.point)
+ppp2<-plot_multidim(final.point)
+
 }
 \references{
-The s_regression and the "max" score are taken from "Conformal Prediction Bands
+The s_regression and the "max" score are taken from
+"Conformal Prediction Bands
 for Multivariate Functional Data" by Diquigiovanni, Fontana, Vantini (2021).
 }
 \seealso{

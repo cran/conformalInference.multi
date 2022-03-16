@@ -2,7 +2,6 @@ n=50
 p=4
 q=2
 
-
 mu=rep(0,p)
 x = mvtnorm::rmvnorm(n, mu)
 beta<-sapply(1:q, function(k) c(mvtnorm::rmvnorm(1,mu)))
@@ -14,16 +13,11 @@ n0<-nrow(y0)
 q<-ncol(y)
 
 fun=mean_multi()
-fun=lm_multi()
-fun=elastic.funs()
-
-
-############################## SPLIT CONFORMAL
-
 
 final.point = conformal.multidim.split(x,y,x0, fun$train.fun, fun$predict.fun,
                              alpha=0.1,
-                                split=NULL, seed=FALSE, randomized=FALSE,seed_rand=FALSE,
-                                verbose=FALSE, rho=0.5,score ="l2",s_type="st-dev")
+                                split=NULL, seed=FALSE, randomized=FALSE,seed.rand=FALSE,
+                                verbose=FALSE, rho=0.5,score ="l2",s.type="st-dev")
 
-ppp2<-plot_multidim_split(final.point)
+ppp2<-plot_multidim(final.point)
+

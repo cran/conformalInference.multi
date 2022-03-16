@@ -24,13 +24,13 @@
 #'   If both split and seed are passed, the former takes priority and the latter
 #'   is ignored.
 #' @param randomized Should the randomized approach be used? Default is FALSE.
-#' @param seed_rand The seed for the randomized version. Default is FALSE.
+#' @param seed.rand The seed for the randomized version. Default is FALSE.
 #' @param verbose Should intermediate progress be printed out? Default is FALSE.
 #' @param rho Split proportion between training and calibration set.
 #' Default is 0.5.
 #' @param score The non-conformity measure. It can either be "max", "l2", "mahalanobis".
 #' The default is "l2".
-#' @param s_type The type of modulation function.
+#' @param s.type The type of modulation function.
 #'  Currently we have 3 options: "identity","st-dev","alpha-max". Default is "st-dev"
 #' @param mad.train.fun A function to perform training on the absolute residuals
 #'   i.e., to produce an estimator of E(R|X) where R is the absolute residual
@@ -51,13 +51,14 @@
 #'   means that no local scaling is done for the conformal score, i.e., the
 #'   usual (unscaled) conformal score is used.
 #'
-#' @return A list with the following components: x0,pred,k_s,s_type,s,alpha,randomized,tau,
+#' @return A list with the following components: x0,pred,k_s,s.type,s,alpha,randomized,tau,
 #'   average_width,lo,up. In particular pred, lo, up are the matrices of
-#'   dimension n0 x q, k_s is a scalar, s_type is a string, s is a vector of length q,
+#'   dimension n0 x q, k_s is a scalar, s.type is a string, s is a vector of length q,
 #'   alpha is a scalar between 0 and 1, randomized is a logical value,
 #'   tau is a scalar between 0 and 1,and average_width is a positive scalar.
 #'
-#' @details If the two mad functions are provided they take precedence over the s_type parameter,
+#' @details If the two mad functions are provided they take precedence over the
+#' s.type parameter,
 #' and they force a local scoring via the mad function predicted values.
 #'
 #' @importFrom stats mad mahalanobis
@@ -66,7 +67,8 @@
 #'
 #' @seealso \code{\link{conformal.multidim.full}}
 #'
-#' @references The s_regression and the "max" score are taken from "Conformal Prediction Bands
+#' @references The s_regression and the "max" score are taken from
+#' "Conformal Prediction Bands
 #' for Multivariate Functional Data" by Diquigiovanni, Fontana, Vantini (2021).
 #'
 #' @example inst/examples/ex.split.R
@@ -75,17 +77,18 @@
 
 
 conformal.multidim.split = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
-                                 split=NULL, seed=FALSE, randomized=FALSE,seed_rand=FALSE,
+                                 split=NULL, seed=FALSE, randomized=FALSE,seed.rand=FALSE,
                                  verbose=FALSE, rho=0.5,
-                                 score="l2",s_type="st-dev", mad.train.fun = NULL,
+                                 score="l2",s.type="st-dev", mad.train.fun = NULL,
                                  mad.predict.fun = NULL) {
 
 
   ## Check Data and Splits
   check.split(x=x,y=y,x0=x0,train.fun=train.fun,
               predict.fun=predict.fun, alpha=alpha, seed=seed, training_size
-              =rho, seed.tau=seed.tau, randomized=randomized,
-              mad.train.fun = mad.train.fun, mad.predict.fun = mad.predict.fun, score = score)
+              =rho, seed.rand=seed.rand, randomized=randomized,
+              mad.train.fun = mad.train.fun, mad.predict.fun = mad.predict.fun,
+              score = score)
 
   n=dim(x)[1]
   p=dim(x)[2]
@@ -129,7 +132,7 @@ conformal.multidim.split = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
   calibration=setdiff(1:n,training)
 
   if(randomized==FALSE) {tau=1} else{
-    if(seed_rand!=FALSE){set.seed(seed_rand)}
+    if(seed.rand!=FALSE){set.seed(seed.rand)}
     tau=stats::runif(n=1,min=0,max=1)
   }
 
@@ -152,7 +155,7 @@ conformal.multidim.split = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
 
 
   res = y - fit
-  s=computing_s_regression(mat_residual=res[training,],type=s_type,
+  s=computing_s_regression(mat_residual=res[training,],type=s.type,
                                  alpha=alpha,tau=tau)
   resc = t(t(res[calibration,] )/ s)
 
@@ -181,12 +184,9 @@ conformal.multidim.split = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
   lo=pred-band
 
 
-  return(structure(.Data=list(x0,pred,k_s,s_type,s,alpha,randomized,tau,
-                              average_width,
-                              lo,up),
-                   names=c("x0","pred","k_s","s_type","s","alpha","randomized","tau"
-                           ,"average_width", "lo", "up")))
+  return(structure(.Data=list(pred,lo,up,x0),
+                   names=c("pred","lo", "up","x0")))
 
 }
 
-utils::globalVariables(c("pval", "seed.tau"))
+utils::globalVariables(c("pval", "seed.rand"))

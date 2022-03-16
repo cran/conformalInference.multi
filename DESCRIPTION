@@ -2,7 +2,7 @@ Type: Package
 Package: conformalInference.multi
 Title: Conformal Inference Tools for Regression with Multivariate
         Response
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person("Jacopo", "Diquigiovanni", role = c("aut", "ths")),
     person("Matteo", "Fontana", , "matteo.fontana@ec.europa.eu", role = c("aut", "ths")),
@@ -31,9 +31,10 @@ Imports: future (>= 1.23.0), future.apply (>= 1.8.1), ggplot2 (>=
         3.3.5), glmnet, gridExtra (>= 2.3), hrbrthemes, stats,
 Suggests: mvtnorm, pbapply
 Encoding: UTF-8
+LazyData: true
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2022-02-17 14:13:38 UTC; paolo
+Packaged: 2022-03-16 16:16:11 UTC; paolo
 Author: Jacopo Diquigiovanni [aut, ths],
   Matteo Fontana [aut, ths],
   Aldo Solari [aut, ths],
@@ -42,4 +43,4 @@ Author: Jacopo Diquigiovanni [aut, ths],
   Ryan Tibshirani [ctb]
 Maintainer: Paolo Vergottini <paolo.vergottini@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-02-25 09:30:02 UTC
+Date/Publication: 2022-03-16 16:40:06 UTC

@@ -23,5 +23,5 @@ final.full=conformal.multidim.full(x, y, x0, fun$train.fun,
                                 num.grid.pts.dim=5, grid.factor=1.25,
                                 verbose=FALSE)
 
-ppp<-plot_multidim_full(final.full)
+ppp<-plot_multidim(final.full)
 

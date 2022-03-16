@@ -73,10 +73,11 @@
 
 
 conformal.multidim.msplit = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
-                                      split=NULL, seed=FALSE, randomized=FALSE,seed.rand=FALSE,
+                                      split=NULL, seed=FALSE, randomized=FALSE,
+                                      seed.rand=FALSE,
                                       verbose=FALSE, rho=NULL,score = "max",
                                       s.type = "st-dev",B=100,lambda=0,
-                                      tau = 1-(B+1)/(2*B),mad.train.fun = NULL,
+                                      tau = 0.1,mad.train.fun = NULL,
                                       mad.predict.fun = NULL) {
 
 
@@ -95,7 +96,7 @@ conformal.multidim.msplit = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
   full=q*n0
   loB<-upB<-matrix(0,nrow=B,ncol=full)
 
-  tr = tau*B + .001
+  tr = 2*tau*B + .001
 
 
   future::plan(future::multisession)
@@ -128,13 +129,22 @@ conformal.multidim.msplit = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
 
   ## Select the deeper level set according to 'tr' and get lower and upper bounds
   join <- future.apply::future_lapply(1:n0, function (j) {
-    o=order(joint.dep[j,])
-    qt=o[ceiling(2*tr):(2*B)]
+    o=order(joint.dep[j,],decreasing = TRUE)
+    a<-floor(tr)
+    qt=o[1:a]
     obs<-joint[[j]][qt,]
     lo<-apply(obs,2,min)
     up<-apply(obs,2,max)
-    return(t(cbind(lo,up)))
+    return(obs)
   })
+
+  lo<-t(sapply(1:n0, function(i){
+    return(apply(join[[i]],2,min))
+  }))
+
+  up<-t(sapply(1:n0, function(i){
+    return(apply(join[[i]],2,max))
+  }))
 
 
   ## To avoid CRAN check errors
@@ -143,6 +153,6 @@ conformal.multidim.msplit = function(x,y, x0, train.fun, predict.fun, alpha=0.1,
 
 
 
-  return(join)
+  return(list(lo=lo,up=up,x0=x0))
 }
 

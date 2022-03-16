@@ -69,22 +69,31 @@ conformal.multidim.jackplus = function(x,y,x0, train.fun, predict.fun, alpha=0.1
   ## Compute depth
   joint.dep<-t(sapply(1:n0, function(k) depth.max(joint[[k]]) ))
 
-
   join <- future.apply::future_lapply(1:n0, function (j) {
     o=order(joint.dep[j,])
     qt=o[floor(alpha*n):n]
     obs<-joint[[j]][qt,]
-    lo<-apply(obs,2,min)
-    up<-apply(obs,2,max)
-    return(t(cbind(lo,up)))
+    return(obs)
   })
+
+
+  lo<-t(sapply(1:n0, function(i){
+    return(apply(join[[i]],2,min))
+  }))
+
+  up<-t(sapply(1:n0, function(i){
+    return(apply(join[[i]],2,max))
+  }))
 
 
   ## To avoid CRAN check errors
   ## R CMD check: make sure any open connections are closed afterward
   future::plan(future::sequential)
 
-  return(join)
+
+
+  return(list(lo=lo,up=up,x0=x0))
+
 }
 
 
