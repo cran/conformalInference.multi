@@ -1,23 +1,27 @@
-n=50
-p=4
-q=2
 
-mu=rep(0,p)
-x = mvtnorm::rmvnorm(n, mu)
-beta<-sapply(1:q, function(k) c(mvtnorm::rmvnorm(1,mu)))
-y = x%*%beta + t(mvtnorm::rmvnorm(q,1:n))
-x0=x[ceiling(0.9*n):n,]
-y0=y[ceiling(0.9*n):n,]
+sample_size=98
 
-n0<-nrow(y0)
-q<-ncol(y)
+my_grid <- seq(from=0,to=1,length.out=5)
+mu <- c(0,0,0)
+sigma <- rbind(c(1,0.6,0.6), c(0.6,1,0.6), c(0.6,0.6,1))
+mltvnorm3 <- mvtnorm::rmvnorm(sample_size, mu, sigma)
+y=t(apply(mltvnorm3,1,function(x) x[1] + x[2]*cos(6*pi*my_grid) + x[3]*sin(6*pi*my_grid)))
+x=mltvnorm3 + mvtnorm::rmvt(sample_size, diag(length(mu)))## add noise
+
+n0=10
+x0 = mvtnorm::rmvt(n0, diag(length(mu)))
 
 fun=mean_multi()
+fun=lm_multi()
+fun=elastic.funs()
 
-final.point = conformal.multidim.split(x,y,x0, fun$train.fun, fun$predict.fun,
+
+############################## SPLIT CONFORMAL
+
+
+final.point = conformal.multidim.split(x,y[,1:2],x0[1:10,], fun$train.fun, fun$predict.fun,
                              alpha=0.1,
-                                split=NULL, seed=FALSE, randomized=FALSE,seed.rand=FALSE,
-                                verbose=FALSE, rho=0.5,score ="l2",s.type="st-dev")
+                                split=NULL, seed=FALSE, randomized=FALSE,seed_tau=FALSE,
+                                verbose=FALSE, training_size=0.5,score ="l2",s_type="st-dev")
 
 ppp2<-plot_multidim(final.point)
-
